@@ -30,18 +30,18 @@ class Box:
         else: 
             return False
 
-def GetNumberOfBlockInSolution(optimal,optimalHeight):
-    blocks = 0
-    startblock = optimal.index(optimalHeight);
+def GetSolution(optimalHeightArray,optimal,stacking):
+    solution = [] 
+    startblock = optimalHeightArray.index(optimal);
     next = startblock
-    while (True):                 
-        blocks = blocks +1
+    while (True):                         
+        solution.append(Boxes[next -1])
         next = stacking[next]
         if(next == 0 or next == None):
             break
-        
-    return  blocks   
-    
+    solution.reverse()    
+    return  solution
+       
 
 #Initialization 
 inputfile = ""
@@ -59,15 +59,15 @@ numberoflines = int(inh.readline());
 Boxes = [] 
 for i in range(1,numberoflines+1):
     line = inh.readline().strip();
-    line = line.replace(",","")
+    line = line.replace(",","").replace("{","").replace("}","")
     l = list(map(int, re.split('\s+', line)))    
     x = l[0]
     y= l[1]
     z = l[2]     
     #Insert all 3 rotation of the box type
-    Boxes.append( Box(max(x,y),min(x,y),z))
-    Boxes.append(Box(max(z,x),min(z,x),y))
-    Boxes.append(Box(max(z,y),min(z,y),x))
+    Boxes.append( Box(min(x,y),max(x,y),z))
+    Boxes.append(Box(min(z,x),max(z,x),y))
+    Boxes.append(Box(min(z,y),max(z,y),x))
 
 # Sorting boxes according to base area     
 Boxes = sorted(Boxes, key=base, reverse=True )    
@@ -97,18 +97,18 @@ for i in range(1,len(Boxes)+1):
 optimalHeight = max(optHeightArray);
 
 
-# calculating the number of blocka
-blocks = GetNumberOfBlockInSolution(optHeightArray,optimalHeight)
-print("The tallest tower has " + str(blocks) + " blocks and a height of " +str(optimalHeight))
+# Get the solution
+solution = GetSolution(optHeightArray,optimalHeight,stacking)
+print("The tallest tower has " + str(len(solution)) + " blocks and a height of " +str(optimalHeight))
 
 #write the output
 outh = open(outputfile, "w")
-outh.write(str(blocks) + "\n" ) 
-for i in range(0,blocks):
-    s = str(Boxes[i].x)  + " " +  str(Boxes[i].y) + " " + str(Boxes[i].z) 
-    outh.write(s+ "\n")
+outh.write(str(len(solution)) + "\n" ) 
+for box in solution:
+    s = str(box.x)  + " " +  str(box.y) + " " + str(box.z) 
     if(len(sys.argv) < 2):
-         print(s)
+        print(s)
+    outh.write(s+"\n" )     
     
 outh.flush()
 outh.close()  
