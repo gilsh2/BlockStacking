@@ -2,7 +2,7 @@ Program in python that solves the Block stacking problem.
 
 Files: 
 blocks.py the python code for the Block stacking problem.
-Readme.txt - this documentation file 
+readme.txt - this documentation file 
 
 To run  the program  execute from a command line :  python blocks.py  <infile.txt> <outfile.txt>
 
