@@ -15,7 +15,7 @@ def base(a):
     return a.x * a.y
 
 #Class the hold the box demintions
-class Box:   
+class Block:   
     def __init__(self, x, y, z):     
         self.x = x
         self.y = y
@@ -35,7 +35,7 @@ def GetSolution(optimalHeightArray,optimal,stacking):
     startblock = optimalHeightArray.index(optimal);
     next = startblock
     while (True):                         
-        solution.append(Boxes[next -1])
+        solution.append(Blocks[next -1])
         next = stacking[next]
         if(next == 0 or next == None):
             break
@@ -56,7 +56,7 @@ else :
 # Reading input data     
 inh = open(inputfile)
 numberoflines = int(inh.readline());
-Boxes = [] 
+Blocks = [] 
 for i in range(1,numberoflines+1):
     line = inh.readline().strip();
     line = line.replace(",","").replace("{","").replace("}","")
@@ -65,33 +65,33 @@ for i in range(1,numberoflines+1):
     y= l[1]
     z = l[2]     
     #Insert all 3 rotation of the box type
-    Boxes.append( Box(min(x,y),max(x,y),z))
-    Boxes.append(Box(min(z,x),max(z,x),y))
-    Boxes.append(Box(min(z,y),max(z,y),x))
+    Blocks.append( Block(min(x,y),max(x,y),z))
+    Blocks.append(Block(min(z,x),max(z,x),y))
+    Blocks.append(Block(min(z,y),max(z,y),x))
 
 # Sorting boxes according to base area     
-Boxes = sorted(Boxes, key=base, reverse=True )    
+Blocks = sorted(Blocks, key=base, reverse=True )    
     
 
-optHeightArray  = [None] * (len(Boxes)+1)
+optHeightArray  = [None] * (len(Blocks)+1)
 optHeightArray[0] =0
-stacking  = [None] * (len(Boxes)+1)
+stacking  = [None] * (len(Blocks)+1)
 
 # Computing all the solutions from i to n in which the ith block is ontop using the recursion nature of the problem
 # The i+1 solution evalutes all 1..i previous solution(stack of blocks) and find the best one to utilize ( or non at all) to place the i+1
 #box ontop of it.
-for i in range(1,len(Boxes)+1):
+for i in range(1,len(Blocks)+1):
     maxHeightIndex = 0
     for j in reversed(range(0,i) ):        
-        if(Boxes[j].x > Boxes[i-1].x and  Boxes[j].y > Boxes[i-1].y   ):
+        if(Blocks[j].x > Blocks[i-1].x and  Blocks[j].y > Blocks[i-1].y   ):
             if(optHeightArray[maxHeightIndex] < optHeightArray[j+1]):
                         maxHeightIndex = j+1                          
-                        #print("set maxHeightIndex as  " + str(Boxes[j]) + ">" + str(Boxes[i-1])  ,i,j)                
-                  
-    optHeightArray[i]=optHeightArray[maxHeightIndex] + Boxes[i-1].z;    
+                        #print("set maxHeightIndex as  " + str(Blocks[j]) + ">" + str(Blocks[i-1])  ,i,j)                
+                        
+    # Adding block i on top of the best stack found from previous solutions              
+    optHeightArray[i]=optHeightArray[maxHeightIndex] + Blocks[i-1].z;    
     stacking[i] = maxHeightIndex;
-    #print("optHeight for i=" + str(i)+" Boxes[i-1].z = " +str(Boxes[i-1].z) +" optHeight[maxHeightIndex]=" +str(optHeight[maxHeightIndex])  ,optHeight)
-    #print("stacking=",stacking)
+
 
 # getting the maximum stack out of all the stacks we computed 
 optimalHeight = max(optHeightArray);
@@ -104,8 +104,8 @@ print("The tallest tower has " + str(len(solution)) + " blocks and a height of "
 #write the output
 outh = open(outputfile, "w")
 outh.write(str(len(solution)) + "\n" ) 
-for box in solution:
-    s = str(box.x)  + " " +  str(box.y) + " " + str(box.z) 
+for block in solution:
+    s = str(block.x)  + " " +  str(block.y) + " " + str(block.z) 
     if(len(sys.argv) < 2):
         print(s)
     outh.write(s+"\n" )     
